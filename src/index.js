@@ -211,6 +211,20 @@ function updateMap(ast, newJson, json, yaml) {
   each(ast.value, pair => {
     let [keyNode, valNode] = pair;
 
+    if (isArray(valNode.value[0])) {
+      let [nextKeyNode, nextValNode] = valNode.value[0];
+
+      if (nextValNode &&
+        (isObject(nextValNode.value) || isArray(nextValNode.value))
+      ) {
+        if (!newJson[keyNode.value][nextKeyNode.value]) {
+          yaml = yaml.substr(0, keyNode.end_mark.pointer + 1) +
+            ` ${newJson[keyNode.value]}\n` + yaml.substring(valNode.end_mark.pointer);
+          return;
+        }
+      }
+    }
+
     // node is deleted
     if (isUndefined(newJson[keyNode.value])) {
 

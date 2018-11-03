@@ -93,5 +93,40 @@ describe('preserves comments and styling in objects when', ()=> {
               val: 43 # inline comment
         # trailing comment`);
     });
+
+    it('a non-primitive value is replaced by a primitive', () => {
+
+      let str = `obj:
+  deep:
+    val: true
+obj2: 1234`;
+
+      let yawn = new YAWN(str);
+      let json = yawn.json;
+      json.obj = 3;
+
+      yawn.json = json;
+
+      expect(yawn.yaml).to.equal(`obj: 3
+obj2: 1234`);
+    });
+
+    it('a primitive is replaced', () => {
+      let str = `obj: true
+obj2:
+  deep: val
+obj3: false`;
+
+      let yawn = new YAWN(str);
+      let json = yawn.json;
+      json.obj3 = true;
+
+      yawn.json = json;
+
+      expect(yawn.yaml).to.equal(`obj: true
+obj2:
+  deep: val
+obj3: true`);
+    });
   });
 });
