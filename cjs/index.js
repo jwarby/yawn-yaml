@@ -38,7 +38,7 @@ var DASH = '-';
 
 // export default class YAWN {
 var YAWN = (function () {
-  function YAWN(str) {
+  function YAWN(str, options) {
     _classCallCheck(this, YAWN);
 
     if (!(0, _lodash.isString)(str)) {
@@ -46,6 +46,7 @@ var YAWN = (function () {
     }
 
     this.yaml = str;
+    this.options = options;
   }
 
   /*
@@ -85,7 +86,7 @@ var YAWN = (function () {
   }, {
     key: 'json',
     get: function get() {
-      return (0, _jsYaml.load)(this.yaml);
+      return (0, _jsYaml.load)(this.yaml, this.options);
     },
     set: function set(newJson) {
 
@@ -228,6 +229,20 @@ function updateMap(ast, newJson, json, yaml) {
 
     var keyNode = _pair[0];
     var valNode = _pair[1];
+
+    if ((0, _lodash.isArray)(valNode.value[0])) {
+      var _valNode$value$0 = _slicedToArray(valNode.value[0], 2);
+
+      var nextKeyNode = _valNode$value$0[0];
+      var nextValNode = _valNode$value$0[1];
+
+      if (nextValNode && ((0, _lodash.isObject)(nextValNode.value) || (0, _lodash.isArray)(nextValNode.value))) {
+        if (!newJson[keyNode.value][nextKeyNode.value]) {
+          yaml = yaml.substr(0, keyNode.end_mark.pointer + 1) + (' ' + newJson[keyNode.value] + '\n') + yaml.substring(valNode.end_mark.pointer);
+          return;
+        }
+      }
+    }
 
     // node is deleted
     if ((0, _lodash.isUndefined)(newJson[keyNode.value])) {
