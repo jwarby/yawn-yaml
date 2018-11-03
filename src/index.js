@@ -32,16 +32,17 @@ const DASH = '-';
 // export default class YAWN {
 export default class YAWN {
 
-  constructor(str) {
+  constructor(str, options) {
     if (!isString(str)) {
       throw new TypeError('str should be a string');
     }
 
     this.yaml = str;
+    this.options = options;
   }
 
   get json() {
-    return load(this.yaml);
+    return load(this.yaml, this.options);
   }
 
   set json(newJson) {
